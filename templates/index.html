@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Encode / Decode PNG</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    margin: 0;
+    padding: 40px;
+    color: #e2e8f0;
+}
+
+.container{
+    max-width: 900px;
+    margin: auto;
+    background: #111827;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+}
+
+h1{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.tabs{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tabs button{
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #1f2937;
+    color: white;
+    font-size: 16px;
+    transition: 0.2s;
+}
+
+.tabs button:hover{
+    background: #374151;
+}
+
+.tab{
+    display: none;
+}
+
+.tab.active{
+    display: block;
+}
+
+textarea{
+    width: 100%;
+    height: 160px;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    resize: vertical;
+    font-size: 14px;
+}
+
+button.submit{
+    margin-top: 15px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+button.submit:hover{
+    background: #2563eb;
+}
+
+/* 🎯 Bouton fichier stylé */
+.file-btn{
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.file-btn:hover{
+    background: #2563eb;
+}
+
+.file-btn input{
+    display: none;
+}
+
+#file-name{
+    margin-left: 10px;
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+.result{
+    margin-top: 20px;
+    padding: 15px;
+    background: #1f2937;
+    border-radius: 10px;
+}
+
+.error{
+    margin-top: 20px;
+    padding: 15px;
+    background: #7f1d1d;
+    border-radius: 10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔐 Encode / Decode PNG</h1>
+
+<div class="tabs">
+
+<button onclick="showTab('encode')">Encode</button>
+<button onclick="showTab('decode')">Decode</button>
+
+</div>
+
+<!-- ENCODE -->
+<div id="encode" class="tab active">
+
+<h2>Encoder un message</h2>
+
+<form action="/encode" method="POST">
+
+<textarea name="message" placeholder="Écris ton message secret..." required></textarea>
+
+<button class="submit" type="submit">
+Télécharger le PNG
+</button>
+
+</form>
+
+{% if error %}
+
+<div class="error">
+{{ error }}
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- DECODE -->
+<div id="decode" class="tab">
+
+<h2>Décoder une image</h2>
+
+<form action="/decode" method="POST" enctype="multipart/form-data">
+
+<label class="file-btn">
+    Choisir un fichier
+    <input type="file" name="image" accept=".png" required>
+</label>
+
+<span id="file-name"></span>
+
+<br>
+
+<button class="submit" type="submit">
+Décoder
+</button>
+
+</form>
+
+{% if decoded_message %}
+
+<div class="result">
+
+<strong>Message décodé :</strong>
+
+<p>{{ decoded_message }}</p>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<script>
+
+function showTab(tab){
+
+    document.querySelectorAll(".tab")
+        .forEach(t => t.classList.remove("active"));
+
+    document.getElementById(tab)
+        .classList.add("active");
+}
+
+// afficher nom fichier
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.querySelector('input[type="file"]');
+    const fileName = document.getElementById("file-name");
+
+    input.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+            fileName.textContent = this.files[0].name;
+        } else {
+            fileName.textContent = "";
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+
+</html>
